@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type Checking
+.mypy_cache/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+
+# Project specific files (ignore test/local models)
+*.ifc
+*.ifczip
+*.bcf
+output/
+reports/
