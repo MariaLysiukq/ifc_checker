@@ -1,0 +1,24 @@
+{
+  "rules": [
+    {
+      "rule_id": "PSET_001",
+      "description": "Перевірка наявності параметра несучої здатності стін",
+      "type": "PropertyCheck",
+      "params": {
+        "entity_type": "IfcWall",
+        "pset_name": "Pset_WallCommon",
+        "property_name": "LoadBearing"
+      }
+    },
+    {
+      "rule_id": "PSET_002",
+      "description": "Двері повинні мати параметр вогнестійкості",
+      "type": "PropertyCheck",
+      "params": {
+        "entity_type": "IfcDoor",
+        "pset_name": "Pset_DoorCommon",
+        "property_name": "FireRating"
+      }
+    }
+  ]
+}

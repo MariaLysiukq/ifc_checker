@@ -9,6 +9,7 @@ from ifc_checker.reporters.html_reporter import HtmlReporter
 from ifc_checker.rules.attribute_rule import AttributeExistsRule
 from ifc_checker.rules.property_rule import PropertyExistsRule
 from ifc_checker.reporters.bcf_reporter import BcfReporter
+from ifc_checker.core.rule_loader import JSONRuleLoader
 
 
 def build_default_engine() -> ValidationEngine:
@@ -57,6 +58,14 @@ def main() -> None:
         default="html",
         help="Report output format (html, excel, or bcf)",
     )
+    # Додано новий аргумент для JSON-правил
+    parser.add_argument(
+        "-r",
+        "--rules",
+        type=str,
+        default=None,
+        help="Path to custom rules JSON file (e.g., rules.json)",
+    )
 
     args = parser.parse_args()
 
@@ -65,7 +74,29 @@ def main() -> None:
         print(f"Error: File '{args.ifc_file}' does not exist.")
         sys.exit(1)
 
-    engine = build_default_engine()
+    # Логіка вибору: динамічні правила з файлу АБО хардкод-правила
+    if args.rules:
+        rules_path = Path(args.rules)
+        if not rules_path.exists():
+            print(f"Error: Rules file '{args.rules}' does not exist.")
+            sys.exit(1)
+
+        print(f"Loading custom rules from '{args.rules}'...")
+        loader = IFCModelLoader()
+        engine = ValidationEngine(loader=loader)
+        rule_loader = JSONRuleLoader(rules_path)
+
+        try:
+            dynamic_rules = rule_loader.load_rules()
+            for rule in dynamic_rules:
+                engine.register_rule(rule)
+        except Exception as e:
+            print(f"Error parsing JSON rules: {e}")
+            sys.exit(1)
+    else:
+        print("No custom rules provided. Using default built-in rules.")
+        engine = build_default_engine()
+
     print(f"Validating '{ifc_path.name}'...")
     result = engine.validate(str(ifc_path))
 
