@@ -174,7 +174,8 @@ docker build -t ifc-checker .
 ---
 
 Here is the example of report:
-<img width="1280" height="431" alt="зображення" src="https://github.com/user-attachments/assets/e2a6352f-eb27-4c36-9410-e0587e334e04" />
+<img width="1886" height="745" alt="зображення" src="https://github.com/user-attachments/assets/81415f49-a9cf-456a-b171-b71034a3f272" />
+
 
 
 **Built for OpenBIM & VDC Engineers**
