@@ -8,6 +8,7 @@ from ifc_checker.reporters.excel_reporter import ExcelReporter
 from ifc_checker.reporters.html_reporter import HtmlReporter
 from ifc_checker.rules.attribute_rule import AttributeExistsRule
 from ifc_checker.rules.property_rule import PropertyExistsRule
+from ifc_checker.reporters.bcf_reporter import BcfReporter
 
 
 def build_default_engine() -> ValidationEngine:
@@ -52,9 +53,9 @@ def main() -> None:
     parser.add_argument(
         "-f",
         "--format",
-        choices=["html", "excel"],
+        choices=["html", "excel", "bcf"],
         default="html",
-        help="Report output format (html or excel)",
+        help="Report output format (html, excel, or bcf)",
     )
 
     args = parser.parse_args()
@@ -71,6 +72,8 @@ def main() -> None:
     reporter: IReporter
     if args.format == "excel":
         reporter = ExcelReporter()
+    elif args.format == "bcf":
+        reporter = BcfReporter()
     else:
         reporter = HtmlReporter()
 
