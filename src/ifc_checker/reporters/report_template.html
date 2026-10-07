@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFC Validation Report</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS (Base) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <style>
+        /* Сучасна кольорова палітра "Zinc" (Shadcn/Vercel стиль) */
+        :root {
+            --bg-background: #09090b;
+            --bg-card: #09090b;
+            --border-color: #27272a;
+            --text-primary: #fafafa;
+            --text-muted: #a1a1aa;
+
+            /* Semantic Colors (Soft) */
+            --color-error: #ef4444;
+            --bg-error: rgba(239, 68, 68, 0.1);
+            --color-warning: #f59e0b;
+            --bg-warning: rgba(245, 158, 11, 0.1);
+            --color-info: #3b82f6;
+            --bg-info: rgba(59, 130, 246, 0.1);
+            --color-success: #10b981;
+        }
+
+        body {
+            background-color: var(--bg-background);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Навігація */
+        .navbar {
+            background-color: var(--bg-background) !important;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+        }
+        .navbar-brand { font-weight: 600; font-size: 1.25rem; color: var(--text-primary) !important; }
+        .nav-meta { color: var(--text-muted); font-size: 0.875rem; }
+
+        /* Картки */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: border-color 0.2s ease;
+        }
+        .card:hover { border-color: #3f3f46; }
+        .card-header-custom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
+
+        /* Іконки в картках */
+        .icon-elements { color: var(--text-muted); }
+        .icon-errors { color: var(--color-error); }
+        .icon-warnings { color: var(--color-warning); }
+        .icon-infos { color: var(--color-info); }
+
+        /* Бейджі */
+        .badge { font-weight: 500; padding: 0.35em 0.65em; border-radius: 4px; font-size: 0.75rem; letter-spacing: 0.02em; }
+        .badge-error { background-color: var(--bg-error); color: var(--color-error); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .badge-warning { background-color: var(--bg-warning); color: var(--color-warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .badge-info { background-color: var(--bg-info); color: var(--color-info); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .badge-rule { background-color: #27272a; color: #e4e4e7; font-family: monospace; }
+
+        /* Код і кнопки */
+        code { color: var(--text-muted); background-color: #18181b; padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); font-size: 0.875rem; }
+        .copy-btn { color: var(--text-muted); background: none; border: none; padding: 0 4px; transition: color 0.15s ease; }
+        .copy-btn:hover { color: var(--text-primary); }
+
+        /* Таблиця */
+        .table { color: var(--text-primary); margin-bottom: 0; }
+        .table > :not(caption) > * > * { background-color: transparent; border-bottom-color: var(--border-color); padding: 1rem; }
+        .table-light th {
+            background-color: #18181b !important;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color) !important;
+        }
+        .table-hover tbody tr:hover td { background-color: #18181b; color: var(--text-primary); }
+        td { font-size: 0.875rem; vertical-align: middle; }
+        td.msg-cell { color: var(--text-muted); }
+
+        /* DataTables Customization */
+        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter { color: var(--text-muted) !important; margin-bottom: 1rem; font-size: 0.875rem; }
+        .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_paginate { color: var(--text-muted) !important; margin-top: 1rem; font-size: 0.875rem; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button { color: var(--text-muted) !important; border: 1px solid transparent !important; border-radius: 6px; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover { background: #27272a !important; color: var(--text-primary) !important; border-color: var(--border-color) !important; }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: #fafafa !important; color: #09090b !important; border-color: #fafafa !important; font-weight: 500;
+        }
+        .form-select, .form-control {
+            background-color: #09090b; border-color: var(--border-color); color: var(--text-primary); font-size: 0.875rem; border-radius: 6px;
+        }
+        .form-select:focus, .form-control:focus {
+            background-color: #09090b; color: var(--text-primary); border-color: #52525b; box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar mb-4">
+    <div class="container-fluid px-4 py-2">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box me-2" viewBox="0 0 16 16">
+                <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5 8 5.961 14.154 3.5zM15 4.239l-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z"/>
+            </svg>
+            IFC Health Checker
+        </a>
+        <span class="nav-meta">Generated: {{ generation_date }}</span>
+    </div>
+</nav>
+
+<div class="container-fluid px-4 mb-5">
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card p-4 h-100">
+                <div class="card-header-custom">
+                    <span>Total Elements</span>
+                    <i class="bi bi-layers icon-elements"></i>
+                </div>
+                <div class="stat-value">{{ total_elements }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 h-100">
+                <div class="card-header-custom">
+                    <span>Critical Errors</span>
+                    <i class="bi bi-x-circle icon-errors"></i>
+                </div>
+                <div class="stat-value">{{ error_count }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 h-100">
+                <div class="card-header-custom">
+                    <span>Warnings</span>
+                    <i class="bi bi-exclamation-triangle icon-warnings"></i>
+                </div>
+                <div class="stat-value">{{ warning_count }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 h-100">
+                <div class="card-header-custom">
+                    <span>Info Notes</span>
+                    <i class="bi bi-info-circle icon-infos"></i>
+                </div>
+                <div class="stat-value">{{ info_count }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="card">
+        <div class="card-body p-4">
+            <h5 class="mb-4" style="font-weight: 600; font-size: 1.125rem;">Validation Issues Log</h5>
+
+            <div class="table-responsive">
+                <table id="issuesTable" class="table table-hover w-100">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Rule ID</th>
+                            <th>Element GUID</th>
+                            <th>Element Type</th>
+                            <th>Severity</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for issue in issues %}
+                        <tr>
+                            <td><span class="badge badge-rule">{{ issue.rule_id }}</span></td>
+                            <td>
+                                <code id="guid-{{ loop.index }}">{{ issue.element_id }}</code>
+                                <button class="copy-btn ms-2" onclick="copyToClipboard('guid-{{ loop.index }}')" title="Copy GUID">
+                                    <i class="bi bi-copy"></i>
+                                </button>
+                            </td>
+                            <td>{{ issue.element_type }}</td>
+                            <td>
+                                {% if issue.severity.name in ['ERROR', 'CRITICAL'] %}
+                                    <span class="badge badge-error">Error</span>
+                                {% elif issue.severity.name == 'WARNING' %}
+                                    <span class="badge badge-warning">Warning</span>
+                                {% else %}
+                                    <span class="badge badge-info">Info</span>
+                                {% endif %}
+                            </td>
+                            <td class="msg-cell">{{ issue.message }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function() {$('#issuesTable').DataTable({
+            "order": [[ 3, "asc" ]],
+            "pageLength": 25,
+            "language": {
+                "search": "",
+                "searchPlaceholder": "Filter issues...",
+                "lengthMenu": "Show _MENU_ rows"
+            },
+            "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+                   "<'row'<'col-sm-12'tr>>" +
+                   "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"
+        });
+    });
+
+    function copyToClipboard(elementId) {
+        var copyText = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(copyText).then(function() {
+            let btn = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"] i`);
+            btn.className = "bi bi-check2 text-success";
+            setTimeout(() => { btn.className = "bi bi-copy"; }, 2000);
+        });
+    }
+</script>
+</body>
+</html>

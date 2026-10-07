@@ -1,0 +1,1 @@
+recursive-include src/ifc_checker/reporters *.html
