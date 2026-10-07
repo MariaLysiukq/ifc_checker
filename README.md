@@ -157,7 +157,18 @@ Register your new rule in `cli.py` or your custom runner script:
 engine.register_rule(CustomClassificationRule())
 
 ```
+## Docker Support
 
+You can run the checker entirely within an isolated Docker container without needing to install Python or OpenBIM dependencies on your local machine.
+
+### Build the Image
+```bash
+docker build -t ifc-checker .
+```
 ---
+
+Here is the example of report:
+<img width="1280" height="431" alt="зображення" src="https://github.com/user-attachments/assets/e2a6352f-eb27-4c36-9410-e0587e334e04" />
+
 
 **Built for OpenBIM & VDC Engineers**
