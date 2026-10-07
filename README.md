@@ -121,8 +121,14 @@ Creates a formatted `.xlsx` workbook designed for issue tracking and BIM QA work
 * `Severity`
 * `Message / Description`
 
+### 3. BCF 2.1 Native Integration (.bcfzip)
 
+Generates a standardized BIM Collaboration Format (BCF 2.1) zip package for direct feedback loops with design teams:
 
+* `Direct Software Import: Drag and drop .bcfzip into Revit, Navisworks, Archicad, or Solibri.`
+
+* `Automatic Element Isolation: Modeler can click an issue to automatically select and zoom to the exact GlobalId of the non-compliant element.`
+    
 ---
 
 ## Extending Rules
