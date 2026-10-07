@@ -35,3 +35,6 @@ strict = true
 ignore_missing_imports = true
 mypy_path = "src"
 explicit_package_bases = true
+
+[project.scripts]
+ifc-checker = "ifc_checker.cli:main"
