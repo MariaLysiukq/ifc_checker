@@ -18,6 +18,16 @@
 
 >  **Why this tool exists:** Manual BIM QA/QC and COBie compliance checks in Solibri or Navisworks can be time-consuming and costly. This tool provides a **headless, lightweight, and scriptable alternative** using native OpenBIM standards (`ifcopenshell`) to audit models directly in local environments or automated CI/CD pipelines.
 
+
+## Current checks
+
+The default rule set checks:
+
+- `Name` on `IfcWall` elements
+- `Name` on `IfcDoor` elements
+- `Pset_WallCommon.LoadBearing` on `IfcWall` elements
+
+You can also provide custom rules from a JSON file. The current default rules are a starting point, not a complete COBie compliance specification.
 ---
 
 ## Key Features
@@ -176,6 +186,47 @@ docker build -t ifc-checker .
 Here is the example of report:
 <img width="1886" height="745" alt="зображення" src="https://github.com/user-attachments/assets/81415f49-a9cf-456a-b171-b71034a3f272" />
 
+## Run a validation
+
+```bash
+ifc-checker path/to/model.ifc --output report.html --format html
+```
+
+Available report formats are `html`, `excel`, and `bcf`:
+
+```bash
+ifc-checker path/to/model.ifc --output report.xlsx --format excel
+ifc-checker path/to/model.ifc --output report.bcfzip --format bcf
+```
+
+To load custom rules from a JSON file:
+
+```bash
+ifc-checker path/to/model.ifc --rules rules.json --output report.html
+```
+
+Run `ifc-checker --help` for all command-line options.
+
+## Run tests
+
+```bash
+pytest
+```
+
+## Project structure
+
+```text
+.
+├── src/ifc_checker/
+│   ├── cli.py
+│   ├── core/
+│   ├── loaders/
+│   ├── reporters/
+│   └── rules/
+├── tests/
+├── rules.json
+└── pyproject.toml
+```
 
 
 **Built for OpenBIM & VDC Engineers**
